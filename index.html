@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Multiverse Bubbles</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div id="welcome-screen" class="screen center">
+    <h1>Welcome to the Multiverse</h1>
+    <p id="click-to-continue" class="hidden">Click to go ahead</p>
+  </div>
+
+  <div id="input-screen" class="screen hidden">
+    <h2>Enter your name and location</h2>
+    <input type="text" id="name" placeholder="Your Name" />
+    <input type="text" id="location" placeholder="Your Location" />
+    <button onclick="showQuestion()">Continue</button>
+  </div>
+
+  <div id="question-screen" class="screen hidden">
+    <h2>So, what's your career in this universe?</h2>
+    <input type="text" id="answer" placeholder="Enter your answer" />
+    <button onclick="submitAnswer()">Submit</button>
+  </div>
+
+  <div id="bubble-screen" class="screen hidden">
+    <canvas id="bubbleCanvas"></canvas>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
