@@ -3,24 +3,149 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Multiverse Bubble Wall</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <title>Multiverse Bubbles</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      background: url('background.png') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+      font-weight: bold;
+    }
+
+    .screen {
+      display: none;
+      height: 100vh;
+      width: 100vw;
+      position: absolute;
+      top: 0;
+      left: 0;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    input, button {
+      margin: 10px;
+      padding: 10px;
+      border: none;
+      font-size: 1rem;
+      border-radius: 5px;
+    }
+
+    button {
+      background-color: white;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  </style>
 </head>
 <body>
-  <div id="welcome-screen">
-    <h1>Welcome to the Multiverse</h1>
-    <p id="click-text" style="display: none;">Click to go ahead</p>
+  <div id="input-screen" class="screen" style="display: flex;">
+    <h2>Welcome to the Multiverse</h2>
+    <p style="margin-top: 40px;">Click anywhere to go ahead</p>
   </div>
 
-  <div id="main-app" style="display: none;">
-    <h1>So, what's your career in this universe?</h1>
-    <input type="text" id="answer" placeholder="Type your answer..." />
-    <button id="submit">Submit</button>
-    <div id="bubble-container"></div>
+  <div id="name-screen" class="screen">
+    <h2>What's your name and location?</h2>
+    <input type="text" id="name" placeholder="Your Name" />
+    <input type="text" id="location" placeholder="Your Location" />
+    <button onclick="nextStep()">Next</button>
   </div>
 
-  <script src="script.js"></script>
+  <div id="question-screen" class="screen">
+    <h2>So, what's your career in this universe?</h2>
+    <input type="text" id="answer" placeholder="Enter your answer" />
+    <button onclick="submitAnswer()">Submit</button>
+  </div>
+
+  <div id="bubble-screen" class="screen">
+    <canvas id="bubbleCanvas"></canvas>
+  </div>
+
+  <script>
+    const inputScreen = document.getElementById("input-screen");
+    const nameScreen = document.getElementById("name-screen");
+    const questionScreen = document.getElementById("question-screen");
+    const bubbleScreen = document.getElementById("bubble-screen");
+
+    let user = { name: '', location: '', answer: '' };
+
+    inputScreen.addEventListener("click", () => {
+      inputScreen.style.display = "none";
+      nameScreen.style.display = "flex";
+    });
+
+    function nextStep() {
+      user.name = document.getElementById("name").value.trim();
+      user.location = document.getElementById("location").value.trim();
+      if (user.name && user.location) {
+        nameScreen.style.display = "none";
+        questionScreen.style.display = "flex";
+      }
+    }
+
+    function submitAnswer() {
+      user.answer = document.getElementById("answer").value.trim();
+      if (!user.answer) return;
+
+      questionScreen.style.display = "none";
+      bubbleScreen.style.display = "block";
+      showBubbles();
+    }
+
+    const canvas = document.getElementById("bubbleCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let bubbles = [];
+
+    function drawBubbles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let b of bubbles) {
+        ctx.beginPath();
+        ctx.fillStyle = "#d3d3d3";
+        ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+        ctx.font = "bold 14px Arial";
+        ctx.fillText(b.text, b.x, b.y - 5);
+        ctx.font = "12px Arial";
+        ctx.fillText(`${b.name} – ${b.location}`, b.x, b.y + 12);
+        b.y -= b.speed;
+        if (b.y + b.radius < 0) {
+          b.y = canvas.height + b.radius;
+        }
+      }
+      requestAnimationFrame(drawBubbles);
+    }
+
+    function showBubbles() {
+      bubbles.push({
+        x: Math.random() * canvas.width,
+        y: canvas.height,
+        radius: 60,
+        speed: 0.5 + Math.random(),
+        text: user.answer,
+        name: user.name,
+        location: user.location
+      });
+
+      drawBubbles();
+    }
+  </script>
 </body>
 </html>
